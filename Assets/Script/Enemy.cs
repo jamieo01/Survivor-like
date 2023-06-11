@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
     [SerializeField] private float _moveSpeed = 0;
     private Rigidbody _rigidbody;
-    private float _health = 10;
+    private float _health = 1000;
     [SerializeField]Player _player;
     private void Awake()
     {
@@ -16,9 +16,9 @@ public class Enemy : MonoBehaviour, IDamageable
     public void TakeDamage( )
     {
         
-        GetComponent<Rigidbody>().AddForce(Vector3.right * 10, ForceMode.Impulse);
+        
         --_health;
-        if (_health <= 0) DestroyImmediate(this);
+        if (_health <= 0) Destroy(this);
         
 
         
@@ -28,6 +28,15 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         _rigidbody.MovePosition(Vector3.MoveTowards(_rigidbody.position, _player.transform.position,Time.deltaTime * _moveSpeed));
         transform.forward = transform.position -( _player.transform.position - Vector3.down*-.5f );
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        IDamageable damageObject = collision.gameObject.GetComponent<IDamageable>();
+        if (damageObject != null)
+        {
+            damageObject.TakeDamage();
+        }
     }
 
 }

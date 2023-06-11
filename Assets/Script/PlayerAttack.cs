@@ -4,19 +4,33 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
+    PlayerStatistics _playerStatistics;
+    private float _timeBetweenAttacks = 5f;
 
-    float _timeBetweenAttacks = 5f;
+    private float _timeToNextAttack = 5;
 
-    float _timeToNextAttack = 100000000;
+    private bool _rightAttack = true;
+    private bool _leftAttack = true;
+    private bool _upAttack = true;
+    private bool _downAttack = true;
 
-    [SerializeField] private Animator _animator;
+    [SerializeField] private LineRenderer _rightAttackLine;
+    [SerializeField] private LineRenderer _leftAttackLine;
+    [SerializeField] private LineRenderer _upAttackLine;
+    [SerializeField] private LineRenderer _downAttackLine;
+
+    private void Awake()
+    {
+        _playerStatistics = GetComponent<PlayerStatistics>();
+    }
 
     private void Update()
     {
 
         _timeToNextAttack -= Time.deltaTime;
-
+      
         if (_timeToNextAttack <= 0) Attack();
+     
     }
 
 
@@ -24,15 +38,57 @@ public class PlayerAttack : MonoBehaviour
     private void Attack()
     {
 
-        _animator.SetTrigger("Attack");
-        var colliders = Physics.BoxCastAll(transform.position + transform.right, Vector3.zero, transform.right, Quaternion.identity, 1f);
-
-        Debug.Log("Attack");
-        foreach (var item in colliders)
+        if (_rightAttack)
         {
-            item.collider.gameObject.GetComponent<IDamageable>()?.TakeDamage();
+            var colliders =FindEnemiesLocation(transform.right);
+            foreach (var item in colliders)
+            {
+                item.collider.gameObject.GetComponent<IDamageable>()?.TakeDamage();
+                item.collider.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.right * 10, ForceMode.Impulse);
+            }
+            
+            StartCoroutine( AttackLine(_rightAttackLine, transform.right * _playerStatistics.AttackRange));
+           
         }
-
+        if (_leftAttack)
+        {
+            var colliders = FindEnemiesLocation(-transform.right);
+            foreach (var item in colliders)
+            { 
+                item.collider.gameObject.GetComponent<IDamageable>()?.TakeDamage();
+                item.collider.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.left * 10, ForceMode.Impulse) ;
+            }
+            StartCoroutine(AttackLine(_leftAttackLine, -transform.right * _playerStatistics.AttackRange));
+        }
+        if (_upAttack)
+        {
+            var colliders = FindEnemiesLocation(transform.forward);
+            foreach (var item in colliders)
+            {
+                item.collider.gameObject.GetComponent<IDamageable>()?.TakeDamage();
+                item.collider.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.forward * 10, ForceMode.Impulse);
+            }
+            StartCoroutine(AttackLine(_upAttackLine, transform.forward * _playerStatistics.AttackRange));
+        }
+        if (_downAttack)
+        {
+            var colliders = FindEnemiesLocation(-transform.forward);
+            foreach (var item in colliders)
+            {
+                item.collider.gameObject.GetComponent<IDamageable>()?.TakeDamage();
+                item.collider.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.back * 10, ForceMode.Impulse);
+            }
+            StartCoroutine(AttackLine(_downAttackLine, -transform.forward * _playerStatistics.AttackRange));
+        }
         _timeToNextAttack = _timeBetweenAttacks;
+    }
+
+    private RaycastHit[] FindEnemiesLocation(Vector3 attackDirection) { return Physics.BoxCastAll(transform.position + attackDirection, Vector3.zero, attackDirection, Quaternion.identity, 2f); }
+
+    private IEnumerator AttackLine(LineRenderer lineRender, Vector3 attackDirecton ) 
+    {
+        lineRender.SetPosition(1, attackDirecton);
+        yield return new WaitForSeconds(.2f);
+        lineRender.SetPosition(1, Vector3.zero);
     }
 }

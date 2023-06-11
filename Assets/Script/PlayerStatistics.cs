@@ -5,9 +5,10 @@ using UnityEngine;
 public class PlayerStatistics : MonoBehaviour
 {
 
-    private int _maxHealth;
-    private float _attackSpeed;
+    private int _maxHealth =100;
+    private float _attackSpeed = 5;
 
-    public float AttackSpeed { get => _attackSpeed; }
-
+    private float _attackRange = 1.5f;
+    public float AttackSpeed { get => _attackSpeed;}
+    public float AttackRange { get => _attackRange;}
 }
