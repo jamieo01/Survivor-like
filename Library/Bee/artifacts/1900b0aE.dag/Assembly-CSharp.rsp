@@ -360,12 +360,17 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.VSCode.Editor.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEngine.UI.ref.dll"
+"Assets/Script/Abilities/FollowBot.cs"
+"Assets/Script/Build.cs"
 "Assets/Script/Enemy.cs"
 "Assets/Script/EnemySpawner.cs"
 "Assets/Script/IDamageable.cs"
 "Assets/Script/Player.cs"
+"Assets/Script/PlayerAbility.cs"
 "Assets/Script/PlayerAttack.cs"
 "Assets/Script/PlayerStatistics.cs"
+"Assets/Script/References.cs"
+"Assets/Script/Wall.cs"
 -langversion:9.0
 
 /deterministic
